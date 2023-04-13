@@ -1,0 +1,217 @@
+version: '3.8'
+
+
+services:
+################ DATABASES ################################################################################
+  postgres-user:
+    image: postgres:15.2
+    container_name: postgres-user
+    restart: always
+    ports:
+      - "5431:5432"
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  postgres-product:
+    image: postgres:15.2
+    container_name: postgres-product
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: product_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  postgres-order:
+    image: postgres:15.2
+    container_name: postgres-order
+    restart: always
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  postgres-basket:
+    image: postgres:15.2
+    container_name: postgres-basket
+    restart: always
+    ports:
+      - "5437:5432"
+    environment:
+      POSTGRES_DB: basket_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  postgres-payment:
+    image: postgres:15.2
+    container_name: postgres-payment
+    restart: always
+    ports:
+      - "5439:5432"
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  mongo-logservice:
+    image: mongo:5.0
+    container_name: mongo-logservice
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=logservice_db
+    restart: always
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo_data:/data/db
+      - dev_archive:/Databases/dev.archive
+      - production:/Databases/production
+
+  mongo-express:
+    image: mongo-express
+    container_name: mexpress
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_URL=mongodb://root:password@mongo-logservice:27017/?authSource=admin
+      - ME_CONFIG_BASICAUTH_USERNAME=mexpress
+      - ME_CONFIG_BASICAUTH_PASSWORD=mexpress
+    restart: always
+    depends_on:
+      - mongo-logservice
+    ports:
+      - "8081:8081"
+
+
+  ################ KAFKA ################################################################################
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: spring_kafka
+    ports:
+      - '9094:9094'
+    restart: unless-stopped
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_LISTENERS=BROKER://kafka:9092,CONTROLLER://kafka:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=BROKER://kafka:9092,EXTERNAL://127.0.0.1:9094
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=BROKER
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: spring_kafka-ui
+    ports:
+      - "8082:8082"
+    restart: unless-stopped
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - SERVER_PORT=8082
+    depends_on:
+      - kafka
+
+################ ELK ################################################################################
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.3
+    container_name: elasticsearch_springboot
+    environment:
+      - bootstrap.memory_lock=true
+      - cluster.name=docker-cluster
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.3.3
+    container_name: kibana_springboot
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.3.3
+    container_name: logstash_springboot
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5044:5044"
+      - "5012:5000/tcp"
+      - "5033:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+################ ZIPKIN ##############################################################################
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+################ REDIS ##############################################################################
+  redis:
+    container_name: the_redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+################ MONITORING #########################################################################
+#  prometheus:
+#    container_name: the_prometheus
+#    image: quay.io/prometheus/prometheus:v2.0.0
+#    ports:
+#      - "9090:9090"
+#    command: "--config.file=/etc/prometheus/prometheus.yml"
+#    configs:
+#      - source: prometheus.yml
+#        target: /etc/prometheus/prometheus.yml
+#
+#  grafana:
+#    image: grafana/grafana:latest
+#    ports:
+#      - "3000:3000"
+################################################################################################
+
+configs:
+  prometheus.yml:
+    file: ./prometheus.yml
+
+networks:
+  elastic:
+    driver: bridge
+  redis_network:
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  mongo_data:
+  dev_archive:
+  production:
