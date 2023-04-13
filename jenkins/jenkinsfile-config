@@ -26,6 +26,7 @@ pipeline {
             steps {
                 echo 'Packaging the app into jars with gradle'
                 dir('config-server') {
+                sh " chmod +x gradlew"
                 sh "./gradlew "
         }
             }
