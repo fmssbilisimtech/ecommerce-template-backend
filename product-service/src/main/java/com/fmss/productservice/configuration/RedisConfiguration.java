@@ -1,34 +1,53 @@
 package com.fmss.productservice.configuration;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
+import org.springframework.data.redis.connection.RedisNode;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
-import java.time.Duration;
+import java.util.List;
 
+@EnableCaching
 @Configuration
-@RequiredArgsConstructor
 public class RedisConfiguration {
 
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        // RedisCacheConfiguration özelleştirmeleri
-        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(180))
-                //.disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    @Value(value = "${redis.server.address:}")
+    private String redisServerAddress;
 
-        // Özelleştirilmiş RedisCacheManager kullanarak CacheManager bean'i oluşturma
-        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
-                .cacheDefaults(cacheConfiguration)
-                .build();
+    @Value(value = "${redis.server.port}")
+    private int redisServerPort;
+
+
+
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory() {
+            return new LettuceConnectionFactory(localRedisConnection());
     }
+
+    @Bean("fmssRedisTemplate")
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setKeySerializer(RedisSerializer.string());
+        template.setValueSerializer(RedisSerializer.json());
+        template.setHashValueSerializer(RedisSerializer.json());
+        template.setHashKeySerializer(RedisSerializer.string());
+        template.setConnectionFactory(redisConnectionFactory());
+        return template;
+    }
+
+    private RedisStandaloneConfiguration localRedisConnection(){
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+        redisStandaloneConfiguration.setHostName("localhost");
+        redisStandaloneConfiguration.setPort(redisServerPort);
+        return redisStandaloneConfiguration;
+    }
+
+
 }
