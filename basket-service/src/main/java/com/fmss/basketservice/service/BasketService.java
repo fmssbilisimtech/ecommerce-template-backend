@@ -1,5 +1,6 @@
 package com.fmss.basketservice.service;
 
+import com.fmss.basketservice.exception.BasketItemNotFound;
 import com.fmss.basketservice.exception.BasketNotFoundException;
 import com.fmss.basketservice.feign.ProductClient;
 import com.fmss.basketservice.mapper.BasketItemMapper;
@@ -14,10 +15,13 @@ import com.fmss.basketservice.model.enums.BasketStatus;
 import com.fmss.basketservice.repository.BasketItemRepository;
 import com.fmss.basketservice.repository.BasketRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 
 @Service
@@ -49,9 +53,7 @@ public class BasketService {
     }
 
     public BasketResponseDto getBasketByBasketId(UUID basketId) {
-        return basketMapper.toResponseDto(
-                getById(basketId)
-        );
+        return basketMapper.toResponseDto(getById(basketId));
     }
 
     public void disableBasket(UUID basketId){
@@ -69,6 +71,12 @@ public class BasketService {
         basketRepository.deleteById(basketId);
     }
 
+    @Transactional
+    @Modifying
+    public void deleteAllBasketItems(UUID basketId){
+        basketItemRepository.deleteByBasket_BasketId(basketId);
+    }
+
     public BasketItemResponseDto addBasketItemToBasket(BasketItemRequestDto basketItemRequestDto){
         BasketItem basketItem = basketItemMapper.toEntity(basketItemRequestDto);
 
@@ -77,16 +85,28 @@ public class BasketService {
         return basketItemMapper.toResponseDto(basketItem);
     }
 
-    public void deleteBasketItemFromBasket(UUID basketItemId){
+    /** Verilen id ile BasketItem nesnesini siler */
+    @Transactional
+    @Modifying
+    public BasketResponseDto deleteBasketItemFromBasket(UUID basketItemId){
+        BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(BasketItemNotFound::new);
+        UUID currentBasketId = basketItem.getBasket().getBasketId();
+
         basketItemRepository.deleteById(basketItemId);
+        basketItemRepository.flush();
+
+        return basketMapper.toResponseDto(getById(currentBasketId));
     }
 
-    public BasketItemResponseDto updateQuantityBasketItem(BasketItemUpdateDto basketItemUpdateDto){
+    public BasketResponseDto updateQuantityBasketItem(BasketItemUpdateDto basketItemUpdateDto){
         BasketItem basketItem = basketItemRepository.findById(basketItemUpdateDto.basketItemId()).orElseThrow(() -> new RuntimeException("Basket item not found."));
 
         basketItem.setQuantity(basketItemUpdateDto.quantity());
+        basketItem = basketItemRepository.save(basketItem);
 
-        return basketItemMapper.toResponseDto(basketItemRepository.save(basketItem));
+        BasketResponseDto basketResponseDto = basketMapper.toResponseDto(basketItem.getBasket());
+
+        return basketResponseDto;
     }
 
 }

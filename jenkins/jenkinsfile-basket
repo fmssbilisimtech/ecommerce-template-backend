@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+
+    stages {
+        stage('Stop') {
+            steps {
+              catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
+                echo 'Stopping container'
+                sh "docker stop basket-service"
+                }
+        }}
+
+        stage('Remove') {
+            steps {
+                catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
+                    echo 'Removing container and deleting all local images'
+                    sh "docker rm basket-service"
+                    sh "docker image prune -af"
+                    sh "docker builder prune -af"
+                }
+
+            }
+        }
+        stage('Package Application') {
+            steps {
+                echo 'Packaging the app into jars with gradle'
+                sh "cd basket-service && ./gradlew"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building image'
+                sh "docker build --force-rm -t 'basket-service' ./basket-service"
+            }
+        }
+
+        stage('Run') {
+            steps {
+                echo 'Running container'
+                sh "docker run -d -p 9006:9006 --name basket-service basket-service"
+            }
+        }
+
+ }}
+
+
