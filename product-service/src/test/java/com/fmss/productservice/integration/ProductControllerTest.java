@@ -1,4 +1,4 @@
-//package com.fmss.productservice.integration;
+package com.fmss.productservice.integration;//package com.fmss.productservice.integration;
 //
 //import com.fmss.commondata.model.enums.PaymentStatus;
 //import com.fmss.productservice.model.Product;
