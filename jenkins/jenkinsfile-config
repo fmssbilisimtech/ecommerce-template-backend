@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+
+    stages {
+        stage('Stop') {
+            steps {
+              catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
+                echo 'Stopping container'
+                sh "docker stop basket-service"
+                }
+        }}
+
+        stage('Remove') {
+            steps {
+                catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
+                    echo 'Removing container and deleting all local images'
+                    sh "docker rm config-server"
+                    sh "docker image prune -af"
+                    sh "docker builder prune -af"
+                }
+
+            }
+        }
+        stage('Package Application') {
+            steps {
+                echo 'Packaging the app into jars with gradle'
+                sh "cd config-server
+                    ./gradlew"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building image'
+                sh "docker build --force-rm -t 'config-server' ./config-server"
+            }
+        }
+
+        stage('Run') {
+            steps {
+                echo 'Running container'
+                sh "docker run -d -p 8888:8888 --name config-server config-server"
+            }
+        }
+
+ }}
+
+
