@@ -10,6 +10,4 @@ class BasketServiceApplicationTests {
 	void contextLoads() {
 	}
 
-
-
 }
