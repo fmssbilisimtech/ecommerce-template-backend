@@ -25,8 +25,7 @@ pipeline {
         stage('Package Application') {
             steps {
                 echo 'Packaging the app into jars with gradle'
-                sh "cd config-server"
-                sh "./gradlew"
+                sh "./gradlew ./config-server"
             }
         }
 
