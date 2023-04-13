@@ -32,7 +32,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building image'
-                sh "docker build --force-rm -t 'eureka-service' ./eureka-service"
+                sh "docker build --force-rm --build-arg JAR_FILE=build/libs/*.jar -t 'eureka-service' ./eureka-service"
             }
         }
 
