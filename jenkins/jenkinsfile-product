@@ -28,6 +28,7 @@ pipeline {
                       sh "cd common-data && mvn -X clean && mvn -X install"
                       sh "whoami"
                       sh "chmod 755 common-data/target/common-data-1.0.jar"
+                      sh "chmod -R 755 product-service"
                       sh "cp common-data/target/common-data-1.0.jar product-service"
                       sh "cd product-service && ./gradlew assemble"
                   }
