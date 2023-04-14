@@ -22,7 +22,6 @@ import static com.fmss.basketservice.constants.BasketConstants.*;
 @RestController
 @RequestMapping(API_PREFIX + API_VERSION_V1 + API_BASKET_ITEMS)
 @RequiredArgsConstructor
-@CrossOrigin
 public class BasketItemController {
 
     private final BasketService basketService;
@@ -37,6 +36,7 @@ public class BasketItemController {
                     mediaType = "application/json")))
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/basket-item")
+    @CrossOrigin(origins = "http://89.19.23.50:3000")
     public BasketItemResponseDto addBasketItemToBasket(@RequestBody BasketItemRequestDto basketItemRequestDto) {
         return basketService.addBasketItemToBasket(basketItemRequestDto);
     }
