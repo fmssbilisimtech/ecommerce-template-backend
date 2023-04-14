@@ -7,7 +7,7 @@ pipeline {
             steps {
               catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
                 echo 'Stopping container'
-                sh "docker stop basket-service"
+                sh "docker stop config-service"
                 }
         }}
 
@@ -15,7 +15,7 @@ pipeline {
             steps {
                 catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
                     echo 'Removing container and deleting all local images'
-                    sh "docker rm eureka-service"
+                    sh "docker rm config-service"
                     sh "docker image prune -af"
                     sh "docker builder prune -af"
                 }
@@ -32,14 +32,14 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building image'
-                sh "docker build --force-rm -t 'eureka-service' ./eureka-service"
+                sh "docker build --force-rm -t 'config-service' ./config-service"
             }
         }
 
         stage('Run') {
             steps {
                 echo 'Running container'
-                sh "docker run -d -p 8888:8888 --name config-server config-server"
+                sh "docker run -d -p 8888:8888 --name config-service config-service"
             }
         }
 

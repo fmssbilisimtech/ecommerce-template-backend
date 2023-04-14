@@ -7,7 +7,7 @@ pipeline {
             steps {
               catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
                 echo 'Stopping container'
-                sh "docker stop basket-service"
+                sh "docker stop user-service"
                 }
         }}
 
