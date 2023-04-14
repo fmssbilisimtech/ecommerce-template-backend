@@ -38,7 +38,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public List<ProductResponseDto> getAllProducts() throws JsonProcessingException {
 
-        return productService.getAllProducts(bearerToken);
+        return productService.getAllProducts();
     }
 
     @Operation(summary = "Get product")
