@@ -22,12 +22,14 @@ pipeline {
 
             }
         }
-        stage('Package Application') {
-            steps {
-                echo 'Packaging the app into jars with gradle'
-                sh "cd product-service && ./gradlew assemble"
-            }
-        }
+       stage('Package Application') {
+                  steps {
+                      echo 'Packaging the app into jars with gradle'
+                      sh "cd product-service && ./gradlew assemble"
+                      sh "cd common-data && mvn clean && mvn install "
+                      sh "cp /var/lib/jenkins/workspace/ecommerce-product/common-data/common-data-1.0.jar /var/lib/jenkins/workspace/ecommerce-product/product-service/common.jar"
+                  }
+              }
 
         stage('Build') {
             steps {

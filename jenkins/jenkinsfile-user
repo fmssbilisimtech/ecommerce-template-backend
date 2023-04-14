@@ -27,6 +27,7 @@ pipeline {
                 echo 'Packaging the app into jars with gradle'
                 sh "cd user-service && ./gradlew assemble"
                 sh "cd common-data && mvn clean && mvn install "
+                sh "cp common-data-1.0.jar /var/lib/jenkins/workspace/ecommerce-user/user-service/common.jar"
             }
         }
 
