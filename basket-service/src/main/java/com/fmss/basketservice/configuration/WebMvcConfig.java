@@ -21,15 +21,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(corsFilter).addPathPatterns("/**");
     }
 
-    //  @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/api/**")
-            .allowedOrigins("http://89.19.23.50:55501")
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
-            .allowedHeaders("*")
-            .allowCredentials(true)
-            .maxAge(3600);
-  }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+                .allowedOrigins("http://89.19.23.50:55501")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
