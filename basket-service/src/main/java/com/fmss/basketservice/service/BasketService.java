@@ -35,8 +35,7 @@ public class BasketService {
     private final BasketItemMapper basketItemMapper;
     private final ProductClient productClient;
 
-
-    private Basket createBasket (UUID userId) {
+    private Basket createBasket(UUID userId) {
         Basket newBasket = Basket.builder()
                 .userId(userId)
                 .basketStatus(BasketStatus.ACTIVE)
@@ -58,66 +57,67 @@ public class BasketService {
         return basketMapper.toResponseDto(getById(basketId));
     }
 
-    public void disableBasket(UUID basketId){
+    public void disableBasket(UUID basketId) {
         Basket basket = getById(basketId);
         basket.setBasketStatus(BasketStatus.PASSIVE);
 
         basketRepository.save(basket);
     }
 
-    public void disableBasketWithUserId(UUID userId){
+    public void disableBasketWithUserId(UUID userId) {
         Basket basket = getByUserId(userId);
         basket.setBasketStatus(BasketStatus.PASSIVE);
 
         basketRepository.save(basket);
     }
 
-    private Basket getById(UUID basketId){
+    private Basket getById(UUID basketId) {
         return basketRepository.findById(basketId).orElseThrow(BasketNotFoundException::new);
     }
 
-    private Basket getByUserId(UUID userId){
+    private Basket getByUserId(UUID userId) {
         return basketRepository.findActiveBasketByUserId(userId).orElseThrow(BasketNotFoundException::new);
     }
 
     @Transactional
     @Modifying
-    public void deleteBasket(UUID basketId){
+    public void deleteBasket(UUID basketId) {
         basketRepository.deleteById(basketId);
     }
 
     @Transactional
     @Modifying
-    public void deleteBasketByUserId(UUID userId){
+    public void deleteBasketByUserId(UUID userId) {
         Basket basketByUserId = getByUserId(userId);
         basketRepository.delete(basketByUserId);
     }
 
     @Transactional
     @Modifying
-    public void deleteAllBasketItems(UUID basketId){
+    public void deleteAllBasketItems(UUID basketId) {
         basketItemRepository.deleteByBasket_BasketId(basketId);
     }
 
     @Transactional
     @Modifying
-    public void deleteAllBasketItemsWithUserId(UUID userId){
+    public void deleteAllBasketItemsWithUserId(UUID userId) {
         Basket basketByUserId = getByUserId(userId);
         basketItemRepository.deleteByBasket_BasketId(basketByUserId.getBasketId());
     }
 
-    public BasketItemResponseDto addBasketItemToBasket(BasketItemRequestDto basketItemRequestDto){
+    public BasketItemResponseDto addBasketItemToBasket(BasketItemRequestDto basketItemRequestDto) {
         BasketItem basketItem = basketItemMapper.toEntity(basketItemRequestDto);
 
-        basketItemRepository.save(basketItem);
+        basketItem = basketItemRepository.save(basketItem);
 
         return basketItemMapper.toResponseDto(basketItem);
     }
 
-    public BasketItemResponseDto addBasketItemToBasketWithUserId(BasketItemRequestWithUserIdDto basketItemRequestWithUserIdDto){
+    public BasketItemResponseDto addBasketItemToBasketWithUserId(
+            BasketItemRequestWithUserIdDto basketItemRequestWithUserIdDto) {
         BasketItem basketItem = basketItemMapper.toEntityWithUserId(basketItemRequestWithUserIdDto);
 
-        basketItemRepository.save(basketItem);
+        basketItem = basketItemRepository.save(basketItem);
 
         return basketItemMapper.toResponseDto(basketItem);
     }
@@ -125,7 +125,7 @@ public class BasketService {
     /** Verilen id ile BasketItem nesnesini siler */
     @Transactional
     @Modifying
-    public BasketResponseDto deleteBasketItemFromBasket(UUID basketItemId){
+    public BasketResponseDto deleteBasketItemFromBasket(UUID basketItemId) {
         BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(BasketItemNotFound::new);
         UUID currentBasketId = basketItem.getBasket().getBasketId();
 
@@ -135,8 +135,9 @@ public class BasketService {
         return basketMapper.toResponseDto(getById(currentBasketId));
     }
 
-    public BasketResponseDto updateQuantityBasketItem(BasketItemUpdateDto basketItemUpdateDto){
-        BasketItem basketItem = basketItemRepository.findById(basketItemUpdateDto.basketItemId()).orElseThrow(() -> new RuntimeException("Basket item not found."));
+    public BasketResponseDto updateQuantityBasketItem(BasketItemUpdateDto basketItemUpdateDto) {
+        BasketItem basketItem = basketItemRepository.findById(basketItemUpdateDto.basketItemId())
+                .orElseThrow(() -> new RuntimeException("Basket item not found."));
 
         basketItem.setQuantity(basketItemUpdateDto.quantity());
         basketItem = basketItemRepository.save(basketItem);

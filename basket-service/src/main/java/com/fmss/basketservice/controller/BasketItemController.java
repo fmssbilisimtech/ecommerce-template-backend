@@ -1,6 +1,5 @@
 package com.fmss.basketservice.controller;
 
-
 import com.fmss.basketservice.model.dto.BasketItemRequestDto;
 import com.fmss.basketservice.model.dto.BasketItemUpdateDto;
 import com.fmss.basketservice.service.BasketService;
@@ -27,42 +26,23 @@ public class BasketItemController {
     private final BasketService basketService;
 
     @Operation(summary = "Add basket item to basket")
-    @ApiResponses(value =
-    @ApiResponse(
-            responseCode = "200",
-            description = "Add basket item to basket",
-            content = @Content(
-                    schema = @Schema(implementation = BasketItemResponseDto.class),
-                    mediaType = "application/json")))
+    @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Add basket item to basket", content = @Content(schema = @Schema(implementation = BasketItemResponseDto.class), mediaType = "application/json")))
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/basket-item")
-    @CrossOrigin(origins = "http://89.19.23.50:3000")
     public BasketItemResponseDto addBasketItemToBasket(@RequestBody BasketItemRequestDto basketItemRequestDto) {
         return basketService.addBasketItemToBasket(basketItemRequestDto);
     }
 
     @Operation(summary = "Update Basket Item ")
-    @ApiResponses(value =
-    @ApiResponse(
-            responseCode = "200",
-            description = "Update basket item",
-            content = @Content(
-                    schema = @Schema(implementation = BasketResponseDto.class),
-                    mediaType = "application/json")))
+    @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Update basket item", content = @Content(schema = @Schema(implementation = BasketResponseDto.class), mediaType = "application/json")))
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/quantity-increment/{basketItemId}")
-    public BasketResponseDto updateQuantityBasketItem(@RequestBody BasketItemUpdateDto basketItemUpdateDto){
+    public BasketResponseDto updateQuantityBasketItem(@RequestBody BasketItemUpdateDto basketItemUpdateDto) {
         return basketService.updateQuantityBasketItem(basketItemUpdateDto);
     }
 
     @Operation(summary = "Delete basket item ")
-    @ApiResponses(value =
-    @ApiResponse(
-            responseCode = "204",
-            description = "Delete basket item",
-            content = @Content(
-                    schema = @Schema(implementation = BasketResponseDto.class),
-                    mediaType = "application/json")))
+    @ApiResponses(value = @ApiResponse(responseCode = "204", description = "Delete basket item", content = @Content(schema = @Schema(implementation = BasketResponseDto.class), mediaType = "application/json")))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{basketItemId}")
     public BasketResponseDto deleteBasketItemOnBasket(@PathVariable UUID basketItemId) {
@@ -70,12 +50,7 @@ public class BasketItemController {
     }
 
     @Operation(summary = "Delete all basket item ")
-    @ApiResponses(value =
-    @ApiResponse(
-            responseCode = "204",
-            description = "Delete all basket item",
-            content = @Content(
-                    mediaType = "application/json")))
+    @ApiResponses(value = @ApiResponse(responseCode = "204", description = "Delete all basket item", content = @Content(mediaType = "application/json")))
     @DeleteMapping("/all/{basketId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAllBasketItems(@PathVariable UUID basketId) {
