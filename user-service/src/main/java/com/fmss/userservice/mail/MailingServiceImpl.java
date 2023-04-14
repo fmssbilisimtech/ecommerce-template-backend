@@ -103,7 +103,7 @@ public class MailingServiceImpl implements MailingService {
     }
 
     private String getApplicationBaseUrl() {
-        return "http://localhost:3000";
+        return "http://89.19.23.50:3000";
     }
 
     private String getFromMailAddress() {

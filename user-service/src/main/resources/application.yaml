@@ -29,7 +29,7 @@ redis:
     cacheable:
       ttl: 180
   server:
-    address: localhost
+    address: 89.19.23.50
     port: 6379
     cluster:
       nodes:

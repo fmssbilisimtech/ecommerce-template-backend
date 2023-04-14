@@ -39,7 +39,7 @@ public class RedisConfiguration {
 
     private RedisStandaloneConfiguration localRedisConnection(){
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName("localhost");
+        redisStandaloneConfiguration.setHostName("89.19.23.50");
         redisStandaloneConfiguration.setPort(redisServerPort);
         return redisStandaloneConfiguration;
     }

@@ -50,7 +50,7 @@ public class JwtAuthenticationController {
 					schema = @Schema(implementation = OrderResponseDTO.class),
 					mediaType = "application/json")))
 	@ResponseStatus(HttpStatus.CREATED)
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "http://89.19.23.50:3000")
 	@PostMapping("/authenticate")
 	public ResponseEntity<JwtResponseDto> createAuthenticationToken(@RequestBody JwtAuthenticationRequestDto jwtAuthenticationRequestDto, HttpServletRequest request) throws Exception {
 		authenticate(jwtAuthenticationRequestDto.getUsername(), jwtAuthenticationRequestDto.getPassword());
@@ -71,7 +71,7 @@ public class JwtAuthenticationController {
 					schema = @Schema(implementation = OrderResponseDTO.class),
 					mediaType = "application/json")))
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "http://89.19.23.50:3000")
 	@PostMapping("sent-otp")
 	public ResponseEntity sentOtp(@RequestBody JwtAuthenticationRequestDto jwtAuthenticationRequestDto, HttpServletRequest request) throws Exception {
 		userDetailsConfig.loadUserByUsername(jwtAuthenticationRequestDto.getUsername());
@@ -80,7 +80,7 @@ public class JwtAuthenticationController {
 		return ResponseEntity.ok().build();
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "http://89.19.23.50:3000")
 	@PostMapping("verify-otp")
 	public ResponseEntity verifyOtp(@RequestBody VerifyOtpRequest verifyOtpRequest, HttpServletRequest request) throws Exception {
 		if (userService.verifyOtp(verifyOtpRequest.getUsername(), verifyOtpRequest. getOtp())) {
