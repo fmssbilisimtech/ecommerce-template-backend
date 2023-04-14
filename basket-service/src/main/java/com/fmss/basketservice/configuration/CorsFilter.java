@@ -5,16 +5,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Slf4j
 @Component
-public class CorsFilter extends OncePerRequestFilter {
+public class CorsFilter implements Filter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
         log.info("CorsFilter::method:{}::url:{}", request.getMethod(), request.getRequestURI());
 
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -25,7 +26,7 @@ public class CorsFilter extends OncePerRequestFilter {
         if ("OPTIONS".equals(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
-            filterChain.doFilter(request, response);
+            chain.doFilter(request, response);
         }
     }
 }
