@@ -1,5 +1,6 @@
 package com.fmss.productservice.filter;
 
+import com.fmss.basketservice.configuration.CorsFilter;
 import com.fmss.commondata.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ public class UserFilter implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new CorsFilter());
         registry.addInterceptor(new TokenValidateConfiguration(jwtUtil()));
     }
 
