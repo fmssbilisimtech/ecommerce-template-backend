@@ -12,18 +12,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
   @Autowired
   private CorsFilter corsFilter;
 
-//  @Override
-//  public void addInterceptors(InterceptorRegistry registry) {
-//    registry.addInterceptor(corsFilter).addPathPatterns("/**");
-//  }
-
   @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/api/**")
-            .allowedOrigins("*")
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
-            .allowedHeaders("*")
-            .allowCredentials(true)
-            .maxAge(3600);
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(corsFilter).addPathPatterns("/**");
   }
+
+//  @Override
+//  public void addCorsMappings(CorsRegistry registry) {
+//    registry.addMapping("/api/**")
+//            .allowedOrigins("*")
+//            .allowedMethods("GET", "POST", "PUT", "DELETE")
+//            .allowedHeaders("*")
+//            .allowCredentials(true)
+//            .maxAge(3600);
+//  }
 }
