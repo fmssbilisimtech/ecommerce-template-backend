@@ -26,6 +26,7 @@ pipeline {
             steps {
                 echo 'Packaging the app into jars with gradle'
                 sh "cd product-service && ./gradlew assemble"
+                sh "cd common-data && mvn clean && mvn install "
             }
         }
 
