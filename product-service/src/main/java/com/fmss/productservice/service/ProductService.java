@@ -2,9 +2,6 @@ package com.fmss.productservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fmss.commondata.configuration.UserContext;
-import com.fmss.commondata.dtos.response.JwtTokenResponseDto;
-import com.fmss.commondata.util.JwtUtil;
 import com.fmss.productservice.exception.ProductCouldNotCreateException;
 import com.fmss.productservice.exception.ProductNotFoundException;
 import com.fmss.productservice.mapper.ProductMapper;
@@ -16,7 +13,6 @@ import com.fmss.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,8 +34,6 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final FileUploadService fileUploadService;
     private final RedisCacheService redisCacheService;
-    @Autowired
-    private UserContext userContext;
 
     @SneakyThrows
     public List<ProductResponseDto> getAllProducts(String bearerToken) throws JsonProcessingException {
