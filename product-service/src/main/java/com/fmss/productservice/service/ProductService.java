@@ -1,18 +1,22 @@
 package com.fmss.productservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
-import com.fmss.productservice.configuration.RedisCacheService;
+import com.fmss.commondata.configuration.UserContext;
+import com.fmss.commondata.dtos.response.JwtTokenResponseDto;
+import com.fmss.commondata.util.JwtUtil;
 import com.fmss.productservice.exception.ProductCouldNotCreateException;
 import com.fmss.productservice.exception.ProductNotFoundException;
 import com.fmss.productservice.mapper.ProductMapper;
 import com.fmss.productservice.model.Product;
 import com.fmss.productservice.model.dto.ProductRequestDto;
 import com.fmss.productservice.model.dto.ProductResponseDto;
+import com.fmss.productservice.redis.RedisCacheService;
 import com.fmss.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,12 +38,14 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final FileUploadService fileUploadService;
     private final RedisCacheService redisCacheService;
+    @Autowired
+    private UserContext userContext;
 
-
-    public List<ProductResponseDto> getAllProducts() {
+    @SneakyThrows
+    public List<ProductResponseDto> getAllProducts(String bearerToken) throws JsonProcessingException {
         List<ProductResponseDto> productResponseDtos = productRepository.getAllProducts()
-                .parallelStream().map(productMapper::toProductResponseDto).toList();
-
+                .parallelStream()
+                .map(productMapper::toProductResponseDto).toList();
         productResponseDtos.forEach(addDataToCache());
         return productResponseDtos;
     }
@@ -51,6 +57,8 @@ public class ProductService {
             redisCacheService.writeListToCachePutAll("products", cacheMap);
         };
     }
+
+    ;
 
 
     public ProductResponseDto getProductById(UUID productId) {

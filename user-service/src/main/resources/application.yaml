@@ -24,14 +24,14 @@ jwt:
 
 redis:
   service:
-    prefix: USR-SW:RDS
+    prefix: CMN-SW:RDS
     ttl: 3000
     cacheable:
       ttl: 180
   server:
-    address: 89.19.23.50
+    address: localhost
     port: 6379
     cluster:
       nodes:
     password:
-    environment: live
+    environment: dev

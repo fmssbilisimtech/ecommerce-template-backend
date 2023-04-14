@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.UUID;
 
 /*, configuration = ServiceTwoClientConfig.class)*/
-@FeignClient(name = "ProductClient", url = "http://89.19.23.50:9003")
+@FeignClient(name = "ProductClient", url = "http://localhost:9003")
 public interface ProductClient {
 
     @GetMapping("/api/v1/product/{productId}")

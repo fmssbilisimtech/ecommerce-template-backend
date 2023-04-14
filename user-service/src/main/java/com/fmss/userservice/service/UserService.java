@@ -119,10 +119,20 @@ public class UserService {
     @Transactional
     public void changePassword(String email, String currentPassword, String newPassword) {
         final var ldapUser = ldapRepository.findUser(email);
-        if (passwordEncoder.matches(currentPassword, ldapUser.getUserPassword())) {
+//        if (passwordEncoder.matches(currentPassword, ldapUser.getUserPassword())) {
+        if (ldapAuth(email, currentPassword)) {
             changeUserPassword(ldapUser, newPassword);
         } else {
             throw new RestException(CURRENT_AND_BEFORE_PASSWORD_NOT_MATCH);
+        }
+    }
+
+    private boolean ldapAuth(String username, String password) {
+        try {
+            return ldapRepository.checkPassword(username, password);
+        } catch (Exception e) {
+            log.error("Password not matched : " + username, e);
+            return false;
         }
     }
 
@@ -179,7 +189,7 @@ public class UserService {
         final String token = ldapUser.generateCreatePasswordToken();
         String url = null;
         if (StringUtils.isEmpty(url)) {
-            url = "http://89.19.23.50:3000";
+            url = "http://localhost:3000";
         }
         return String.format(CREATE_PASSWORD_URL_FORMAT, url, token, createBase64UserUid(ldapUser));
     }
@@ -193,7 +203,7 @@ public class UserService {
         log.info("user create forgot password link :{}", user.getUid());
         String url = null;
         if (StringUtils.isEmpty(url)) {
-            url = "http://89.19.23.50:3000";
+            url = "http://localhost:3000";
         }
         return String.format(RESET_PASSWORD_URL_FORMAT, url, token, createBase64UserUid(user));
     }
