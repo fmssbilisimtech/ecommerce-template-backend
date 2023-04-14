@@ -101,6 +101,6 @@ Elastic Logstash Kibana uygulamanın içerisinde embedded logback xmle' bağlı 
 ## Bağlantılar
 https://github.com/fmssbilisimtech/ecommerce-template-backend
 <br>
-https://github.com/gencdevops/e-commerce-microservice-backend
+https://github.com/fmssbilisimtech/e-commerce-microservice-backend
 <br>
 https://github.com/gencdevops/e-commerce-microservice-frontend
