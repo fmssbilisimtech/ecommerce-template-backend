@@ -36,7 +36,7 @@ public class BasketItemController {
                     schema = @Schema(implementation = BasketItemResponseDto.class),
                     mediaType = "application/json")))
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping
+    @PostMapping("/basket-item")
     public BasketItemResponseDto addBasketItemToBasket(@RequestBody BasketItemRequestDto basketItemRequestDto) {
         return basketService.addBasketItemToBasket(basketItemRequestDto);
     }
