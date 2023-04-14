@@ -65,6 +65,7 @@ public class TokenValidateConfiguration implements Filter {
         } catch (Exception e) {
             log.debug("logContextModel can not be init : {}", e.getMessage());
         }
+        chain.doFilter(request, response);
     }
 
     private String parseJwt(HttpServletRequest request) {
