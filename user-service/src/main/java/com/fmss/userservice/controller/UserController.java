@@ -66,13 +66,13 @@ public class UserController {
                     mediaType = "application/json")))
     @GetMapping(API_USER_FORGOT)
     @ResponseStatus(HttpStatus.OK)
-    @CrossOrigin("http://localhost:3000")
+    @CrossOrigin("http://89.19.23.50:3000")
     public void sendForgetPasswordLink(@PathVariable String email) {
         userService.sendForgotPasswordMail(email);
     }
 
 
-    @CrossOrigin("http://localhost:3000")
+    @CrossOrigin("http://89.19.23.50:3000")
     @PostMapping("reset-password")
     public ResponseEntity resetForgottenPassword(@RequestBody ResetPasswordForm form) {
         resetPasswordValidator.validate(form);
@@ -81,7 +81,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin("http://localhost:3000")
+    @CrossOrigin("http://89.19.23.50:3000")
     @PutMapping("change-password")
     public ResponseEntity changePassword(@RequestBody ChangePasswordForm form) {
         changePasswordValidator.validate(form);

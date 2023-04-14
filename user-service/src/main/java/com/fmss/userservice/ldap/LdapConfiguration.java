@@ -10,7 +10,7 @@ public class LdapConfiguration {
     @Bean
     public LdapContextSource contextSource() {
         LdapContextSource contextSource = new LdapContextSource();
-        contextSource.setUrl("ldap://localhost:389");
+        contextSource.setUrl("ldap://89.19.23.50:389");
         contextSource.setUserDn("cn=admin, dc=fmss, dc=com");
         contextSource.setPassword("fmss");
         //contextSource.setReferral("ignore");
