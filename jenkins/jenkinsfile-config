@@ -15,7 +15,7 @@ pipeline {
             steps {
                 catchError(buildResult:'SUCCESS', stageResult:'SUCCESS'){
                     echo 'Removing container and deleting all local images'
-                    sh "docker rm config-server"
+                    sh "docker rm eureka-service"
                     sh "docker image prune -af"
                     sh "docker builder prune -af"
                 }
@@ -28,14 +28,11 @@ pipeline {
                 sh "cd config-service && ./gradlew assemble"
             }
         }
-            }
-
-        }
 
         stage('Build') {
             steps {
                 echo 'Building image'
-                sh "docker build --force-rm -t 'config-server' ./config-server"
+                sh "docker build --force-rm -t 'eureka-service' ./eureka-service"
             }
         }
 
@@ -47,3 +44,5 @@ pipeline {
         }
 
  }}
+
+
