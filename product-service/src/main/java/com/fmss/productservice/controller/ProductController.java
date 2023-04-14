@@ -36,7 +36,7 @@ public class ProductController {
                     mediaType = "application/json")))
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductResponseDto> getAllProducts(@RequestHeader String bearerToken) throws JsonProcessingException {
+    public List<ProductResponseDto> getAllProducts() throws JsonProcessingException {
 
         return productService.getAllProducts(bearerToken);
     }

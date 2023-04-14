@@ -36,7 +36,7 @@ public class ProductService {
     private final RedisCacheService redisCacheService;
 
     @SneakyThrows
-    public List<ProductResponseDto> getAllProducts(String bearerToken) throws JsonProcessingException {
+    public List<ProductResponseDto> getAllProducts() throws JsonProcessingException {
         List<ProductResponseDto> productResponseDtos = productRepository.getAllProducts()
                 .parallelStream()
                 .map(productMapper::toProductResponseDto).toList();
