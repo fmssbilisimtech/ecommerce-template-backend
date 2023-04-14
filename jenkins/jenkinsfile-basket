@@ -22,9 +22,11 @@ pipeline {
 
             }
         }
-        stage('Package Application') {
+       stage('Package Application') {
             steps {
                 echo 'Packaging the app into jars with gradle'
+                sh "cd common-data && mvn clean && mvn install"
+                sh "cp common-data/target/common-data-1.0.jar basket-service/common.jar"
                 sh "cd basket-service && ./gradlew assemble"
             }
         }

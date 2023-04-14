@@ -25,6 +25,8 @@ pipeline {
         stage('Package Application') {
             steps {
                 echo 'Packaging the app into jars with gradle'
+                sh "cd common-data && mvn clean && mvn install"
+                sh "cp common-data/target/common-data-1.0.jar order-service/common.jar"
                 sh "cd order-service && ./gradlew assemble"
             }
         }
