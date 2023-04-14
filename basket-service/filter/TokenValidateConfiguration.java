@@ -27,6 +27,14 @@ public class TokenValidateConfiguration implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+
+        String path =  request.getRequestURI();
+        if (path.startsWith("/actuator") || path.contains("swagger-ui") || path.contains("/v3/api-docs") ||
+                path.contains("favicon") || path.contains("/api/v1/products")) {
+
+            return true;
+        }
+
         final var token = parseJwt(request);
 
         if(Strings.isEmpty(token)) {

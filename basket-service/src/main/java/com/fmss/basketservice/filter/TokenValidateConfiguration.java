@@ -34,6 +34,14 @@ public class TokenValidateConfiguration implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
+        String path = ((HttpServletRequest) request).getRequestURI();
+        if (path.startsWith("/actuator") || path.contains("swagger-ui") || path.contains("/v3/api-docs") ||
+                path.contains("favicon") || path.contains("/api/v1/products")) {
+            chain.doFilter(request, response);
+            return ;
+        }
+
         final var token = parseJwt((HttpServletRequest) request);
 
         if (Strings.isEmpty(token)) {
