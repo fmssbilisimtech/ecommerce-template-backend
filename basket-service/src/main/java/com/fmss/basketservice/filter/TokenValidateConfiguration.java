@@ -62,9 +62,11 @@ public class TokenValidateConfiguration implements Filter {
             boolean isValidToken = jwtUtil.validateToken(token, userName);
 
             log.info("TokenValidateInterceptor::token validating:{}::userName:{}", isValidToken, userName);
+
         } catch (Exception e) {
             log.debug("logContextModel can not be init : {}", e.getMessage());
         }
+        chain.doFilter(request, response);
     }
 
     private String parseJwt(HttpServletRequest request) {
