@@ -38,7 +38,6 @@ public class TokenValidateConfiguration implements HandlerInterceptor {
             String path = request.getRequestURI();
             if (path.startsWith("/actuator") || path.contains("swagger-ui") || path.contains("/v3/api-docs") ||
                     path.contains("favicon")) {
-                chain.doFilter(request, response);
                 return true;
             }
             final var token = parseJwt(request);
