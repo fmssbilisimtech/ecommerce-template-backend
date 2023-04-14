@@ -27,7 +27,7 @@ pipeline {
                       echo 'Packaging the app into jars with gradle'
                       sh "cd common-data && mvn -X clean && mvn -X install"
                       sh "whoami"
-                      sh "cp common-data/target/common-data-1.0.jar product-service/common.jar"
+                      sh "cp common-data/target/common-data-1.0.jar product-service"
                       sh "cd product-service && ./gradlew assemble"
                   }
               }
