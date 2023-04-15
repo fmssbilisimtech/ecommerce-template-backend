@@ -44,6 +44,7 @@ public class ProductService {
             productResponseDtos.forEach(addDataToCache());
         } catch (Exception ex) {
             ex.printStackTrace();
+            log.error("getAllProducts", ex.getMessage());
         }
         return productResponseDtos;
     }
