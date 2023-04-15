@@ -26,7 +26,7 @@ redis:
       ttl: 180
   server:
     address: 89.19.23.50
-    port: 6382
+    port: 6379
     cluster:
       nodes:
     password:
