@@ -1,0 +1,93 @@
+package com.fmss.userservice.configuration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fmss.basketservice.configuration.ThreadContext;
+import com.fmss.commondata.configuration.UserContext;
+import com.fmss.commondata.dtos.response.JwtTokenResponseDto;
+import com.fmss.commondata.util.JwtUtil;
+import com.fmss.userservice.filter.ThreadContext;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.util.Base64;
+
+
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class TokenValidateConfiguration implements Filter {
+
+    private final JwtUtil jwtUtil = new JwtUtil();
+
+    private static final String BEARER = "Bearer ";
+    private static final String AUTHORIZATION = "Authorization";
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        Filter.super.init(filterConfig);
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+
+        String path = ((HttpServletRequest) request).getRequestURI();
+        if (path.startsWith("/actuator") || path.contains("swagger-ui") || path.contains("/v3/api-docs") ||
+                path.contains("favicon") || path.contains("/api/v1/users")) {
+            chain.doFilter(request, response);
+            return ;
+        }
+
+        final var token = parseJwt((HttpServletRequest) request);
+
+        if (Strings.isEmpty(token)) {
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden because of headers");
+            return;
+        }
+
+        try {
+            UserContext userContext = new UserContext();
+            userContext.setUserId(jwtUtil.getUserDetailsFromToken(token).userId());
+            final var chunks = token.split("\\.");
+            final var decoder = Base64.getUrlDecoder();
+
+            final var header = new String(decoder.decode(chunks[0]));
+            final var payload = new String(decoder.decode(chunks[1]));
+            final var userDetails = new ObjectMapper().readValue(payload, JwtTokenResponseDto.class);
+            final var userName = userDetails.email();
+            boolean isValidToken = jwtUtil.validateToken(token, userName);
+
+            userContext.setUserName(userName);
+            userContext.setUserId(userDetails.userId());
+            ThreadContext.setCurrentUser(userContext);
+            log.info("TokenValidateInterceptor::token validating:{}::userName:{}", isValidToken, userName);
+
+        } catch (Exception e) {
+            log.debug("logContextModel can not be init : {}", e.getMessage());
+        }
+        chain.doFilter(request, response);
+    }
+
+    private String parseJwt(HttpServletRequest request) {
+        final var headerAuth = request.getHeader(AUTHORIZATION);
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(BEARER)) {
+            return headerAuth.substring(7);
+        }
+        return "";
+    }
+
+
+
+    @Override
+    public void destroy() {
+        Filter.super.destroy();
+    }
+
+}
