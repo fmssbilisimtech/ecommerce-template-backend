@@ -10,6 +10,7 @@ import com.fmss.userservice.repository.LdapRepository;
 import com.fmss.userservice.repository.UserRepository;
 import com.fmss.userservice.request.UserRegisterRequestDto;
 import com.fmss.userservice.security.EcommerceUserDetailService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +28,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Random;
 
 import static com.fmss.userservice.constants.UserConstants.*;
@@ -209,8 +211,13 @@ public class UserService {
     }
 
     private static String generateTime() {
-        long epochMilli = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
-        return Base64.encodeBase64URLSafeString(String.valueOf(epochMilli).getBytes());
+        try {
+            long epochMilli = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
+            return Base64.encodeBase64URLSafeString(String.valueOf(epochMilli).getBytes());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Base64.encodeBase64URLSafeString(String.valueOf(new Date().getTime()).getBytes());
+        }
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
