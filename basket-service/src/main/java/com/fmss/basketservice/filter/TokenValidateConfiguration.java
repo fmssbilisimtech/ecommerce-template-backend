@@ -1,6 +1,7 @@
 package com.fmss.basketservice.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fmss.basketservice.configuration.ThreadContext;
 import com.fmss.commondata.configuration.UserContext;
 import com.fmss.commondata.dtos.response.JwtTokenResponseDto;
 import jakarta.servlet.*;
@@ -61,6 +62,8 @@ public class TokenValidateConfiguration implements Filter {
             final var userName = userDetails.email();
             boolean isValidToken = jwtUtil.validateToken(token, userName);
 
+            userContext.setUserName(userName);
+            ThreadContext.setCurrentUser(userContext);
             log.info("TokenValidateInterceptor::token validating:{}::userName:{}", isValidToken, userName);
 
         } catch (Exception e) {
