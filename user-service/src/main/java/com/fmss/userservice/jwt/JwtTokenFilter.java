@@ -44,17 +44,9 @@ public class JwtTokenFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        String path = ((HttpServletRequest) request).getRequestURI();
-        if (path.startsWith("/actuator") || path.contains("swagger-ui") || path.contains("/v3/api-docs") ||
-                path.contains("favicon") || path.contains("/api/v1/users")) {
-            chain.doFilter(request, response);
-            return ;
-        }
-
         final var token = parseJwt((HttpServletRequest) request);
-
         if (Strings.isEmpty(token)) {
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden because of headers");
+            chain.doFilter(request, response);
             return;
         }
 
