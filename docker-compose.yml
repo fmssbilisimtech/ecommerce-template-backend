@@ -180,8 +180,8 @@ services:
   redis:
     container_name: the_redis
     image: redis:latest
-    ports:
-      - "6379:6379"
+    expose:
+      - 6379
 
 ################ MONITORING #########################################################################
 #  prometheus:
