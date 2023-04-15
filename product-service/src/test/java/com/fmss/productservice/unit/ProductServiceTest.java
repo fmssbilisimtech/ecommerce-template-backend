@@ -1,10 +1,10 @@
 package com.fmss.productservice.unit;
 
-import com.fmss.productservice.configuration.RedisCacheService;
 import com.fmss.productservice.exception.ProductNotFoundException;
 import com.fmss.productservice.mapper.ProductMapper;
 import com.fmss.productservice.model.Product;
 import com.fmss.productservice.model.dto.ProductResponseDto;
+import com.fmss.productservice.redis.RedisCacheService;
 import com.fmss.productservice.repository.ProductRepository;
 import com.fmss.productservice.service.ProductService;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ class ProductServiceTest {
         List<Product> productList = new ArrayList<>();
         productList.add(product);
 
-        when(productRepository.getAllProducts()).thenReturn(productList);
+        when(productRepository.findAll(PageRequest.of(0,10))).thenReturn((Page<Product>) productList);
         when(productMapper.toProductResponseDto(any())).thenReturn(productResponseDto);
 //        productService.getAllProducts();
         Mockito.verify(redisCacheService).writeListToCachePutAll(any(), any());

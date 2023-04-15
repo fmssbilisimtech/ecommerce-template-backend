@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +35,10 @@ public class ProductController {
             content = @Content(
                     schema = @Schema(implementation = List.class),
                     mediaType = "application/json")))
-    @GetMapping
+    @GetMapping("/{pageNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductResponseDto> getAllProducts() throws JsonProcessingException {
-
-        return productService.getAllProducts();
+    public Page<ProductResponseDto> getAllProducts(@PathVariable Integer pageNumber) throws JsonProcessingException {
+        return productService.getAllProducts(pageNumber);
     }
 
     @Operation(summary = "Get product")

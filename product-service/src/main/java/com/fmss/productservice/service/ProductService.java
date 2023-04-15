@@ -13,16 +13,15 @@ import com.fmss.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -36,10 +35,11 @@ public class ProductService {
     private final RedisCacheService redisCacheService;
 
     @SneakyThrows
-    public List<ProductResponseDto> getAllProducts() throws JsonProcessingException {
-        List<ProductResponseDto> productResponseDtos = productRepository.getAllProducts()
-                .parallelStream()
-                .map(productMapper::toProductResponseDto).toList();
+    public Page<ProductResponseDto> getAllProducts(Integer pageNumber) throws JsonProcessingException {
+
+        final var pageRequest = PageRequest.of(pageNumber, 10);
+        final var productResponseDtos = productRepository.findAll(pageRequest)
+                .map(productMapper::toProductResponseDto);
         productResponseDtos.forEach(addDataToCache());
         return productResponseDtos;
     }
