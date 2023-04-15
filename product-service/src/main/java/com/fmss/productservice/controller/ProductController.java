@@ -35,7 +35,7 @@ public class ProductController {
             content = @Content(
                     schema = @Schema(implementation = List.class),
                     mediaType = "application/json")))
-    @GetMapping("/{pageNumber}")
+    @GetMapping("/page/{pageNumber}")
     @ResponseStatus(HttpStatus.OK)
     public Page<ProductResponseDto> getAllProducts(@PathVariable Integer pageNumber) throws JsonProcessingException {
         return productService.getAllProducts(pageNumber);
