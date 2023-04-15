@@ -2,7 +2,7 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <!-- <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>89.19.23.50:5012</destination>
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
@@ -26,8 +26,23 @@
                 <logstashMarkers />
             </providers>
         </encoder>
+    </appender> -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>
+                        {
+                        "app": "my-app",
+                        "timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSZZ}",
+                        "level": "%level",
+                        "logger": "%logger",
+                        "message": "%message",
+                        "thread": "%thread",
+                        "stacktrace": "%ex{full}",
+                        "mdc": "%mdc"
+                        }
+            </pattern>
+        </layout>
     </appender>
-
 
 
     <logger name="com.fmss" level="INFO">
