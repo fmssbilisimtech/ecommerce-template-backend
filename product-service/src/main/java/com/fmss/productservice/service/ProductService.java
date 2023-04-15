@@ -40,7 +40,11 @@ public class ProductService {
         final var pageRequest = PageRequest.of(pageNumber, 10);
         final var productResponseDtos = productRepository.findAll(pageRequest)
                 .map(productMapper::toProductResponseDto);
-        productResponseDtos.forEach(addDataToCache());
+        try {
+            productResponseDtos.forEach(addDataToCache());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return productResponseDtos;
     }
 
