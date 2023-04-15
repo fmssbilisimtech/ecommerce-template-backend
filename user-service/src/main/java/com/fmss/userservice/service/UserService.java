@@ -201,7 +201,7 @@ public class UserService {
     }
 
     private String createForgotPasswordLink(LdapUser user) {
-        final String token = generateTime();
+        final String token = "test";
         log.info("user create forgot password link :{}", user.getUid());
         String url = null;
         if (StringUtils.isEmpty(url)) {
