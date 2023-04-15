@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
@@ -27,9 +27,9 @@
             </providers>
         </encoder>
     </appender> -->
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>
+<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+        <pattern>
                         {
                         "app": "my-app",
                         "timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSZZ}",
@@ -40,12 +40,12 @@
                         "stacktrace": "%ex{full}",
                         "mdc": "%mdc"
                         }
-            </pattern>
-        </layout>
-    </appender>
+        </pattern>
+    </layout>
+</appender>
 
 
-    <logger name="com.fmss" level="INFO">
-        <appender-ref ref="Console" />
-    </logger>
-</configuration>
+<logger name="com.fmss" level="INFO">
+    <appender-ref ref="Console" />
+</logger>
+</configuration> -->
