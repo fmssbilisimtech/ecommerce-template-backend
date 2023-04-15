@@ -189,10 +189,7 @@ public class UserService {
 
     private String createNewUserPasswordLink(LdapUser ldapUser) {
         final String token = ldapUser.generateCreatePasswordToken();
-        String url = null;
-        if (StringUtils.isEmpty(url)) {
-            url = "http://89.19.23.50:3000";
-        }
+        String url = "http://89.19.23.50:55501";
         return String.format(CREATE_PASSWORD_URL_FORMAT, url, token, createBase64UserUid(ldapUser));
     }
 
@@ -203,10 +200,7 @@ public class UserService {
     private String createForgotPasswordLink(LdapUser user) {
         final String token = generateTime();
         log.info("user create forgot password link :{}", user.getUid());
-        String url = null;
-        if (StringUtils.isEmpty(url)) {
-            url = "http://89.19.23.50:3000";
-        }
+        String url = "http://89.19.23.50:55501";
         return String.format(RESET_PASSWORD_URL_FORMAT, url, token, createBase64UserUid(user));
     }
 
