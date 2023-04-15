@@ -35,16 +35,17 @@ public class ProductService {
     private final RedisCacheService redisCacheService;
 
     @SneakyThrows
-    public Page<ProductResponseDto> getAllProducts(Integer pageNumber) throws JsonProcessingException {
+    public List<ProductResponseDto> getAllProducts() throws JsonProcessingException {
 
-        final var pageRequest = PageRequest.of(pageNumber, 10);
-        final var productResponseDtos = productRepository.findAll(pageRequest)
-                .map(productMapper::toProductResponseDto);
+        final var productResponseDtos = productRepository.findAll()
+                .stream()
+                .map(productMapper::toProductResponseDto)
+                .toList();
         try {
             productResponseDtos.forEach(addDataToCache());
         } catch (Exception ex) {
             ex.printStackTrace();
-            log.error("getAllProducts", ex.getMessage());
+            log.error("getAllProducts:{}", ex.getMessage());
         }
         return productResponseDtos;
     }
@@ -56,9 +57,6 @@ public class ProductService {
             redisCacheService.writeListToCachePutAll("products", cacheMap);
         };
     }
-
-    ;
-
 
     public ProductResponseDto getProductById(UUID productId) {
         return productMapper.toProductResponseDto(productRepository

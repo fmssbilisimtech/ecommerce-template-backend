@@ -35,10 +35,10 @@ public class ProductController {
             content = @Content(
                     schema = @Schema(implementation = List.class),
                     mediaType = "application/json")))
-    @GetMapping("/page/{pageNumber}")
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    public Page<ProductResponseDto> getAllProducts(@PathVariable Integer pageNumber) throws JsonProcessingException {
-        return productService.getAllProducts(pageNumber);
+    public List<ProductResponseDto> getAllProducts() throws JsonProcessingException {
+        return productService.getAllProducts();
     }
 
     @Operation(summary = "Get product")
