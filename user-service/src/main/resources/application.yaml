@@ -3,8 +3,8 @@ spring:
     default-encoding: UTF-8
     host: smtp.gmail.com
     username: ecomfmss@gmail.com
-    password: vsqbngmpjwyjshya
-#    mail giriş şifresi -> fmss2023Ecom
+    password: xqwvzgrjeosaiyif
+    #    mail giriş şifresi -> fmss2023Ecom
     port: 587
     properties:
       mail:

@@ -87,7 +87,7 @@ public class UserService {
         final var ldapUser = ldapRepository.findUser(username);
         log.info("sendForgetLink(userName) method entry :{}", username);
         final String link = createForgotPasswordLink(ldapUser);
-        log.info("password forget link method entry :{}", link.isEmpty());
+        log.info("password forget link method entry :{}", link);
         mailingService.sendForgotPasswordEmail(ldapUser.getMail(), ldapUser.getGivenName(), ldapUser.getSn(), link);
     }
 
@@ -201,7 +201,7 @@ public class UserService {
     }
 
     private String createForgotPasswordLink(LdapUser user) {
-        final String token = "test";
+        final String token = generateTime();
         log.info("user create forgot password link :{}", user.getUid());
         String url = null;
         if (StringUtils.isEmpty(url)) {
