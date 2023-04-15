@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!-- <include resource="org/springframework/boot/logging/logback/base.xml"/> -->
 
     <!-- <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>89.19.23.50:5012</destination>
@@ -46,7 +46,7 @@
 
 
     <logger name="com.fmss" level="INFO">
-        <appender-ref ref="logstash" />
+        <appender-ref ref="Console" />
 
     </logger>
 </configuration>
