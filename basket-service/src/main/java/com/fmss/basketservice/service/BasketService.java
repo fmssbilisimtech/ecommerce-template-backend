@@ -18,6 +18,7 @@ import com.fmss.commondata.configuration.UserContext;
 import com.fmss.commondata.dtos.response.BasketItemResponseDto;
 import com.fmss.commondata.dtos.response.BasketResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BasketService {
@@ -90,6 +92,7 @@ public class BasketService {
     @Transactional
     @Modifying
     public void deleteBasket(UUID basketId) {
+        log.info("deleteBasket::basketId:{}", basketId);
         basketRepository.deleteById(basketId);
     }
 
@@ -103,6 +106,7 @@ public class BasketService {
     @Transactional
     @Modifying
     public void deleteAllBasketItems(UUID basketId) {
+        log.info("deleteAllBasketItems::basketId:{}", basketId);
         basketItemRepository.deleteByBasket_BasketId(basketId);
     }
 
@@ -136,6 +140,7 @@ public class BasketService {
     @Transactional
     @Modifying
     public BasketResponseDto deleteBasketItemFromBasket(UUID basketItemId) {
+        log.info("deleteBasketItemFromBasket::basketItemId:{}", basketItemId);
         BasketItem basketItem = basketItemRepository.findById(basketItemId).orElseThrow(BasketItemNotFound::new);
         UUID currentBasketId = basketItem.getBasket().getBasketId();
 
