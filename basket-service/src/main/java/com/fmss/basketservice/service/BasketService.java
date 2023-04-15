@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -48,8 +49,14 @@ public class BasketService {
     }
 
     public BasketResponseDto getBasketByUserId(UUID userId) {
-        Basket basketByUserId = basketRepository.findByUserIdAndBasketStatus(userId, BasketStatus.ACTIVE).orElse(createBasket(userId));
+        Basket basketByUserId = getByUserIdAndBasketStatus(userId).orElse(createBasket(userId));
         return basketMapper.toResponseDto(basketByUserId);
+    }
+
+    private Optional<Basket> getByUserIdAndBasketStatus(UUID userId) {
+        return basketRepository.findByUserId(userId).stream()
+                .filter(basket -> basket.getBasketStatus() == BasketStatus.ACTIVE)
+                .findFirst();
     }
 
     public BasketResponseDto getBasketByBasketId() {
