@@ -1,8 +1,9 @@
 package com.fmss.basketservice.controller;
 
 
-import com.fmss.basketservice.filter.UserContext;
+import com.fmss.basketservice.configuration.ThreadContext;
 import com.fmss.basketservice.service.BasketService;
+import com.fmss.commondata.configuration.UserContext;
 import com.fmss.commondata.dtos.response.BasketResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,11 +21,9 @@ import static com.fmss.basketservice.constants.BasketConstants.*;
 @RestController
 @RequestMapping(API_PREFIX + API_VERSION_V1 + API_BASKETS)
 @RequiredArgsConstructor
-@CrossOrigin
 public class BasketController {
 
     private final BasketService basketService;
-    private final UserContext userContext;
 
     @Operation(summary = "Basket get by userId")
     @ApiResponses(value =
@@ -35,9 +34,9 @@ public class BasketController {
                     schema = @Schema(implementation = BasketResponseDto.class),
                     mediaType = "application/json")))
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/userId/{userId}")
-    public BasketResponseDto getBasketByUserId() {
-        return basketService.getBasketByUserId(UUID.fromString(userContext.getUserId()));
+    @GetMapping("/user")
+    public BasketResponseDto getUserBasket() {
+        return basketService.getBasketByUserId(UUID.fromString(ThreadContext.getCurrentUser().getUserId()));
     }
 
     @Operation(summary = "Basket get by userId")
@@ -49,9 +48,9 @@ public class BasketController {
                     schema = @Schema(implementation = BasketResponseDto.class),
                     mediaType = "application/json")))
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/basketId/{basketId}")
-    public BasketResponseDto getBasketByBasketId(@PathVariable UUID basketId) {
-        return basketService.getBasketByBasketId(basketId);
+    @GetMapping
+    public BasketResponseDto getBasket() {
+        return basketService.getBasketByBasketId();
     }
 
     @Operation(summary = "Disable basket")

@@ -13,6 +13,7 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -81,6 +82,7 @@ public class LdapRepository {
 
         try {
             DirContextAdapter context = new DirContextAdapter();
+            ldapUser.setUid(UUID.randomUUID().toString());
             context.setAttributeValues(OBJECTCLASS, OBJECT_CLASS_ATTRRIBUTES);
             context.setAttributeValue(LAST_NAME, ldapUser.getSn());
             context.setAttributeValue(FIRST_NAME, ldapUser.getGivenName());

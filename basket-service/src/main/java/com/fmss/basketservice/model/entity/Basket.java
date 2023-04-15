@@ -28,7 +28,7 @@ public class Basket {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID basketId;
 
-    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BasketItem> basketItems;
 
     private BigDecimal totalPrice;

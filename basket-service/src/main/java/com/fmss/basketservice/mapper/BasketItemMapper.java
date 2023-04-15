@@ -7,9 +7,11 @@ import com.fmss.basketservice.model.dto.BasketItemRequestDto;
 import com.fmss.basketservice.model.dto.BasketItemRequestWithUserIdDto;
 import com.fmss.basketservice.model.dto.ProductResponseDto;
 import com.fmss.basketservice.model.entity.BasketItem;
+import com.fmss.basketservice.model.enums.BasketStatus;
 import com.fmss.basketservice.repository.BasketItemRepository;
 import com.fmss.basketservice.repository.BasketRepository;
 import com.fmss.commondata.dtos.response.BasketItemResponseDto;
+import com.fmss.commondata.dtos.response.BasketResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -46,11 +48,11 @@ public class BasketItemMapper {
                 .build();
     }
 
-    public BasketItem toEntity(BasketItemRequestDto basketItemRequestDto){
+    public BasketItem toEntity(BasketItemRequestDto basketItemRequestDto, BasketResponseDto basketByUserId){
         return BasketItem.builder()
                 .productId(basketItemRequestDto.productId())
                 .quantity(basketItemRequestDto.quantity())
-                .basket(basketRepository.findById(basketItemRequestDto.basketId()).orElseThrow(BasketNotFoundException::new))
+                .basket(basketRepository.findById(basketByUserId.basketId()).orElseThrow(BasketNotFoundException::new))
                 .build();
     }
 
@@ -58,7 +60,7 @@ public class BasketItemMapper {
         return BasketItem.builder()
                 .productId(basketItemRequestWithUserIdDto.productId())
                 .quantity(basketItemRequestWithUserIdDto.quantity())
-                .basket(basketRepository.findActiveBasketByUserId(basketItemRequestWithUserIdDto.userId()).orElseThrow(BasketNotFoundException::new))
+                .basket(basketRepository.findByUserIdAndBasketStatus(basketItemRequestWithUserIdDto.userId(), BasketStatus.ACTIVE).orElseThrow(BasketNotFoundException::new))
                 .build();
     }
 

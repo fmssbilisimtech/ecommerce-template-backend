@@ -1,5 +1,6 @@
 package com.fmss.basketservice.service;
 
+import com.fmss.basketservice.configuration.ThreadContext;
 import com.fmss.basketservice.exception.BasketItemNotFound;
 import com.fmss.basketservice.exception.BasketNotFoundException;
 import com.fmss.basketservice.feign.ProductClient;
@@ -33,9 +34,9 @@ public class BasketService {
     private final BasketItemRepository basketItemRepository;
     private final BasketMapper basketMapper;
     private final BasketItemMapper basketItemMapper;
-    private final ProductClient productClient;
 
-    private Basket createBasket(UUID userId) {
+    private Basket createBasket (UUID userId) {
+
         Basket newBasket = Basket.builder()
                 .userId(userId)
                 .basketStatus(BasketStatus.ACTIVE)
@@ -47,14 +48,14 @@ public class BasketService {
     }
 
     public BasketResponseDto getBasketByUserId(UUID userId) {
-        Basket basketByUserId = basketRepository.findActiveBasketByUserId(userId).orElse(createBasket(userId));
-        BasketResponseDto basketResponseDto = basketMapper.toResponseDto(basketByUserId);
-
-        return basketResponseDto;
+        Basket basketByUserId = basketRepository.findByUserIdAndBasketStatus(userId, BasketStatus.ACTIVE).orElse(createBasket(userId));
+        return basketMapper.toResponseDto(basketByUserId);
     }
 
-    public BasketResponseDto getBasketByBasketId(UUID basketId) {
-        return basketMapper.toResponseDto(getById(basketId));
+    public BasketResponseDto getBasketByBasketId() {
+        String userId = ThreadContext.getCurrentUser().getUserId();
+        BasketResponseDto basket = getBasketByUserId(UUID.fromString(userId));
+        return basketMapper.toResponseDto(getById(basket.basketId()));
     }
 
     public void disableBasket(UUID basketId) {
@@ -76,7 +77,7 @@ public class BasketService {
     }
 
     private Basket getByUserId(UUID userId) {
-        return basketRepository.findActiveBasketByUserId(userId).orElseThrow(BasketNotFoundException::new);
+        return basketRepository.findByUserIdAndBasketStatus(userId, BasketStatus.ACTIVE).orElseThrow(BasketNotFoundException::new);
     }
 
     @Transactional
@@ -105,8 +106,10 @@ public class BasketService {
         basketItemRepository.deleteByBasket_BasketId(basketByUserId.getBasketId());
     }
 
-    public BasketItemResponseDto addBasketItemToBasket(BasketItemRequestDto basketItemRequestDto) {
-        BasketItem basketItem = basketItemMapper.toEntity(basketItemRequestDto);
+    public BasketItemResponseDto addBasketItemToBasket(BasketItemRequestDto basketItemRequestDto){
+        String userId = ThreadContext.getCurrentUser().getUserId();
+        BasketResponseDto basketByUserId = getBasketByUserId(UUID.fromString(userId));
+        BasketItem basketItem = basketItemMapper.toEntity(basketItemRequestDto, basketByUserId);
 
         basketItem = basketItemRepository.save(basketItem);
 
