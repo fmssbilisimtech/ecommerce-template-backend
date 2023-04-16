@@ -1,14 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="/org/springframework/boot/logging/logback/base.xml"/>
+
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
         </encoder>
     </appender>
-    <root level="info">
+
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>89.19.23.50:5012</destination>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp />
+                <version />
+                <pattern>
+                    <pattern>
+                        {
+                        "app": "my-app",
+                        "timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSZZ}",
+                        "level": "%level",
+                        "logger": "%logger",
+                        "message": "%message",
+                        "thread": "%thread",
+                        "stacktrace": "%ex{full}",
+                        "mdc": "%mdc"
+                        }
+                    </pattern>
+                </pattern>
+                <context />
+                <logstashMarkers />
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="kafkaAppender" class="com.fmss.commondata.kafka.KafkaAppender">
+        <encoder class="com.fmss.commondata.kafka.LayoutKafkaMessageEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} | %X{spanId:-} | %X{traceId:-} | %-5level | %logger{80} | %msg%n</pattern>
+                <!--                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %X{spanId:-} | %X{traceId:-} | %-5level | %logger{80} | %msg%n</pattern>-->
+                <!--                <pattern>[%date] %highlight([%level]) [%logger{10} %file:%line] %msg%n</pattern>-->
+            </layout>
+        </encoder>
+        <topic>logs</topic>
+        <producerConfig>bootstrap.servers=http://89.19.23.50:9094</producerConfig>
+<!--        <producerConfig>bootstrap.servers=localhost:9094</producerConfig>-->
+
+    </appender>
+
+    <logger name="com.fmss" level="INFO">
+        <appender-ref ref="logstash" />
+        <appender-ref ref="kafkaAppender" />
         <appender-ref ref="STDOUT"/>
+    </logger>
+
+
+    <root level="info">
     </root>
-    <logger name="com.fmss" level="debug"/>
 </configuration>

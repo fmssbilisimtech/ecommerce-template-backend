@@ -184,21 +184,21 @@ services:
       - "6379:6379"
 
 ################ MONITORING #########################################################################
-#  prometheus:
-#    container_name: the_prometheus
-#    image: quay.io/prometheus/prometheus:v2.0.0
-#    ports:
-#      - "9090:9090"
-#    command: "--config.file=/etc/prometheus/prometheus.yml"
-#    configs:
-#      - source: prometheus.yml
-#        target: /etc/prometheus/prometheus.yml
-#
-#  grafana:
-#    image: grafana/grafana:latest
-#    ports:
-#      - "3000:3000"
-################################################################################################
+  prometheus:
+    container_name: the_prometheus
+    image: quay.io/prometheus/prometheus:v2.0.0
+    ports:
+      - "9090:9090"
+    command: "--config.file=/etc/prometheus/prometheus.yml"
+    configs:
+      - source: prometheus.yml
+        target: /jenkins/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3013:3013"
+
 
 configs:
   prometheus.yml:
