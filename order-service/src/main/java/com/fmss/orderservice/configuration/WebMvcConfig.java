@@ -1,6 +1,7 @@
 package com.fmss.orderservice.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -33,6 +34,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://89.19.23.50:55501");
         config.addAllowedMethod("*");
@@ -43,5 +45,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
         return source;
+    }
+
+    @Bean
+    public FilterRegistrationBean corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean bean = new FilterRegistrationBean(new org.springframework.web.filter.CorsFilter(source));
+        bean.setOrder(0);
+        return bean;
     }
 }
