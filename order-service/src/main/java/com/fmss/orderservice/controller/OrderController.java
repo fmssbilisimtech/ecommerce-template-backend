@@ -1,7 +1,5 @@
 package com.fmss.orderservice.controller;
 
-
-
 import com.fmss.commondata.dtos.response.OrderResponseDTO;
 import com.fmss.orderservice.dto.PlaceOrderRequestDTO;
 import com.fmss.orderservice.service.OrderService;
@@ -17,25 +15,17 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-
 import static com.fmss.orderservice.constants.OrderConstants.*;
 
 @RestController
 @RequestMapping(API_PREFIX + API_VERSION_V1 + API_ORDER)
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin
 public class OrderController {
     private final OrderService orderService;
 
     @Operation(summary = "Create order")
-    @ApiResponses(value =
-    @ApiResponse(
-            responseCode = "201",
-            description = "Place order",
-            content = @Content(
-                    schema = @Schema(implementation = OrderResponseDTO.class),
-                    mediaType = "application/json")))
+    @ApiResponses(value = @ApiResponse(responseCode = "201", description = "Place order", content = @Content(schema = @Schema(implementation = OrderResponseDTO.class), mediaType = "application/json")))
     @PostMapping("/place-order")
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponseDTO placeOrder(@RequestBody @Valid PlaceOrderRequestDTO placeOrderRequestDTO) {
