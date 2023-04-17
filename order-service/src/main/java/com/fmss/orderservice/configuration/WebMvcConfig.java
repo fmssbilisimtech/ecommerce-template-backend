@@ -13,12 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private CorsFilter corsFilter;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(corsFilter).addPathPatterns("/**");
+        registry.addInterceptor(new CorsFilter()).addPathPatterns("/**");
     }
 
     @Override
