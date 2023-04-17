@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.Base64;
 
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -33,10 +32,19 @@ public class TokenValidateConfiguration implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
+        String path = ((HttpServletRequest) request).getRequestURI();
+        if (path.startsWith("/actuator") || path.contains("swagger-ui") || path.contains("/v3/api-docs") ||
+                path.contains("favicon")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         final var token = parseJwt((HttpServletRequest) request);
 
         if (Strings.isEmpty(token)) {
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden because of headers");
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "Forbidden because of headers");
             return;
         }
 
@@ -65,8 +73,6 @@ public class TokenValidateConfiguration implements Filter {
         }
         return "";
     }
-
-
 
     @Override
     public void destroy() {
