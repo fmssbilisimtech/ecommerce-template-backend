@@ -23,9 +23,7 @@ public class CorsFilter implements HandlerInterceptor {
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "*");
         response.setHeader("Access-Control-Allow-Credentials", "true");
-        if ("OPTIONS".equals(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        }
+
         return true;
     }
 }
