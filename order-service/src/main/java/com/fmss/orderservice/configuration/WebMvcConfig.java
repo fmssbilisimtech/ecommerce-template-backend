@@ -18,11 +18,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        System.out.println("************Interceptor ...");
         registry.addInterceptor(corsFilter).addPathPatterns("/**");
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        System.out.println("************Cors Mapping ...");
         registry.addMapping("/api/**")
                 .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
@@ -33,6 +35,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        System.out.println("************corsConfigurationSource ...");
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("*");
         config.addAllowedMethod("*");
