@@ -41,7 +41,7 @@ class OrderControllerTest extends BaseIntegrationTest {
                 .build();
 
         PlaceOrderRequestDTO placeOrderRequestDTO = PlaceOrderRequestDTO.builder()
-                .userId(UUID.randomUUID())
+                //.userId(UUID.randomUUID())
                 .basketResponseDto(basketResponseDto)
                 .build();
 

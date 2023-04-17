@@ -73,7 +73,7 @@ class OrderServiceTest {
                 .build();
 
         PlaceOrderRequestDTO placeOrderRequestDTO = PlaceOrderRequestDTO.builder()
-                .userId(UUID.randomUUID())
+                //.userId(UUID.randomUUID())
                 .basketResponseDto(basketResponseDto)
                 .build();
 
@@ -116,7 +116,7 @@ class OrderServiceTest {
                 .build();
 
         PlaceOrderRequestDTO placeOrderRequestDTO = PlaceOrderRequestDTO.builder()
-                .userId(UUID.randomUUID())
+                //.userId(UUID.randomUUID())
                 .basketResponseDto(basketResponseDto)
                 .build();
 
