@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
         Order orderCreated = orderRepository.saveAndFlush(order);
         log.info("Created order {}", order.getOrderId());
 
-        /*CreatePaymentRequestDto createPaymentRequestDto = new CreatePaymentRequestDto(orderCreated.getOrderId()
+        CreatePaymentRequestDto createPaymentRequestDto = new CreatePaymentRequestDto(orderCreated.getOrderId()
                 , UUID.fromString(ThreadContext.getCurrentUser().getUserId()));
         PaymentResponseDto paymentResponse = paymentServiceFeignClient.createPayment(createPaymentRequestDto);
 
@@ -67,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
             log.info("order outbox saved database : {}", savedOrderOutbox.getOrderOutboxId());
         } catch (Exception e) {
             log.error("Error order outbox {}", e.getMessage());
-        }*/
+        }
         log.info("Order success");
         return orderMapper.convertOrderFResponseDtoFromOrder(orderCreated);
     }
