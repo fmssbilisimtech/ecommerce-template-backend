@@ -2,20 +2,18 @@ package com.fmss.orderservice.service;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.fmss.commondata.dtos.request.CreatePaymentRequestDto;
 import com.fmss.commondata.dtos.response.OrderResponseDTO;
 import com.fmss.commondata.dtos.response.PaymentResponseDto;
 import com.fmss.commondata.model.enums.OrderStatus;
 import com.fmss.commondata.model.enums.PaymentStatus;
-
+import com.fmss.orderservice.configuration.ThreadContext;
 import com.fmss.orderservice.dto.PlaceOrderRequestDTO;
 import com.fmss.orderservice.exception.PaymentFailureException;
 import com.fmss.orderservice.feign.PaymentServiceFeignClient;
 import com.fmss.orderservice.mapper.OrderMapper;
 import com.fmss.orderservice.model.Order;
 import com.fmss.orderservice.model.OrderOutbox;
-
 import com.fmss.orderservice.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -23,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -49,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Created order {}", order.getOrderId());
 
         CreatePaymentRequestDto createPaymentRequestDto = new CreatePaymentRequestDto(orderCreated.getOrderId()
-                , placeOrderRequestDTO.userId());
+                , UUID.fromString(ThreadContext.getCurrentUser().getUserId()));
         PaymentResponseDto paymentResponse = paymentServiceFeignClient.createPayment(createPaymentRequestDto);
 
         if (Objects.isNull(paymentResponse) || !paymentResponse.paymentStatus().toString().equals(PaymentStatus.APPROVAL.toString())) {
