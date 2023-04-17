@@ -1,4 +1,4 @@
-package com.fmss.orderservice.configuration;
+package com.fmss.paymentservice.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
